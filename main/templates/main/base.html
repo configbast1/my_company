@@ -1,0 +1,38 @@
+{% load static %}<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{{ company.name }}{% endblock %} | {{ company.name }}</title>
+    <link rel="stylesheet" href="{% static 'main/style.css' %}">
+</head>
+<body>
+<header class="header">
+    <div class="wrap header__row">
+        <a class="logo" href="{% url 'home' %}">{{ company.name }}<span>{{ company.slogan }}</span></a>
+        <nav class="nav">
+            {% for item in menu %}
+            <div class="nav__item">
+                <a class="nav__link {% if item.slug == section_slug %}active{% endif %}"
+                   href="{% url 'section' item.slug %}">{{ item.title }} ▾</a>
+                <div class="nav__dropdown">
+                    {% for sub_slug, sub in item.children.items %}
+                    <a href="{% url 'subsections:detail' item.slug sub_slug %}">{{ sub.title }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </nav>
+    </div>
+</header>
+
+<main class="wrap content">
+    {% block breadcrumbs %}{% endblock %}
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="footer">
+    <div class="wrap">© {% now "Y" %} {{ company.name }} · {{ company.phone }} · {{ company.email }}</div>
+</footer>
+</body>
+</html>

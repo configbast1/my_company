@@ -1,0 +1,88 @@
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", system-ui, sans-serif;
+    background: #f4f6fb;
+    color: #1f2937;
+    line-height: 1.5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+a { color: inherit; text-decoration: none; }
+
+.wrap { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+/* шапка та меню */
+.header { background: #1e3a8a; color: #fff; }
+.header__row { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.logo { font-size: 1.5rem; font-weight: 700; padding: 14px 0; }
+.logo span { display: block; font-size: .8rem; font-weight: 400; opacity: .75; }
+
+.nav { display: flex; gap: 4px; }
+.nav__item { position: relative; }
+.nav__link { display: block; padding: 22px 14px; font-weight: 500; }
+.nav__link:hover, .nav__link.active { background: #2747a8; }
+
+.nav__dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 220px;
+    background: #fff;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, .15);
+    overflow: hidden;
+    z-index: 10;
+}
+.nav__dropdown a { display: block; padding: 10px 16px; color: #1f2937; }
+.nav__dropdown a:hover { background: #eef2ff; color: #1e3a8a; }
+.nav__item:hover .nav__dropdown { display: block; }
+
+/* контент */
+.content { padding: 32px 20px 48px; flex: 1; width: 100%; }
+h1 { margin: 0 0 12px; color: #1e3a8a; }
+.lead { font-size: 1.15rem; color: #4b5563; margin-top: 0; }
+.subtitle { margin-top: 32px; }
+
+.crumbs { font-size: .9rem; color: #6b7280; margin-bottom: 16px; }
+.crumbs a { color: #2563eb; }
+
+.hero {
+    background: linear-gradient(120deg, #2563eb, #1e3a8a);
+    color: #fff;
+    border-radius: 16px;
+    padding: 40px;
+    margin-bottom: 28px;
+}
+.hero h1 { color: #fff; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; }
+.card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 22px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, .06);
+    transition: transform .15s, box-shadow .15s;
+}
+.card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(0, 0, 0, .1); }
+.card__icon { font-size: 2rem; }
+.card h2, .card h3 { margin: 8px 0; color: #1e3a8a; }
+.card p { margin: 0; color: #4b5563; }
+.more { display: inline-block; margin-top: 12px; color: #2563eb; font-weight: 500; }
+
+/* сторінка підрозділу */
+.layout { display: grid; grid-template-columns: 240px 1fr; gap: 24px; }
+.sidebar { background: #fff; border-radius: 14px; padding: 18px; align-self: start; }
+.sidebar h3 { margin: 0 0 10px; }
+.sidebar a { display: block; padding: 8px 12px; border-radius: 8px; }
+.sidebar a:hover { background: #eef2ff; }
+.sidebar a.active { background: #1e3a8a; color: #fff; }
+.article { background: #fff; border-radius: 14px; padding: 28px; }
+.article li { margin-bottom: 8px; }
+.back { display: inline-block; margin-top: 16px; color: #2563eb; }
+
+.footer { background: #111827; color: #9ca3af; padding: 18px 0; text-align: center; font-size: .9rem; }

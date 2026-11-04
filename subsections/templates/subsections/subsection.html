@@ -1,0 +1,34 @@
+{% extends "main/base.html" %}
+
+{% block title %}{{ subsection.title }}{% endblock %}
+
+{% block breadcrumbs %}
+<nav class="crumbs">
+    <a href="{% url 'home' %}">Головна</a> /
+    <a href="{% url 'section' section_slug %}">{{ section.title }}</a> /
+    <span>{{ subsection.title }}</span>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="layout">
+    <aside class="sidebar">
+        <h3>{{ section.icon }} {{ section.title }}</h3>
+        {% for slug, sib in siblings.items %}
+        <a class="{% if slug == sub_slug %}active{% endif %}"
+           href="{% url 'subsections:detail' section_slug slug %}">{{ sib.title }}</a>
+        {% endfor %}
+    </aside>
+
+    <article class="article">
+        <h1>{{ subsection.title }}</h1>
+        <p class="lead">{{ subsection.summary }}</p>
+        <ul>
+            {% for p in subsection.paragraphs %}
+            <li>{{ p }}</li>
+            {% endfor %}
+        </ul>
+        <a class="back" href="{% url 'section' section_slug %}">← Назад до розділу «{{ section.title }}»</a>
+    </article>
+</div>
+{% endblock %}

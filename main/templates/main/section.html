@@ -1,0 +1,25 @@
+{% extends "main/base.html" %}
+
+{% block title %}{{ section.title }}{% endblock %}
+
+{% block breadcrumbs %}
+<nav class="crumbs">
+    <a href="{% url 'home' %}">Головна</a> / <span>{{ section.title }}</span>
+</nav>
+{% endblock %}
+
+{% block content %}
+<h1>{{ section.icon }} {{ section.title }}</h1>
+<p class="lead">{{ section.text }}</p>
+
+<h2 class="subtitle">Підрозділи</h2>
+<div class="grid">
+    {% for sub_slug, sub in subsections.items %}
+    <a class="card" href="{% url 'subsections:detail' section_slug sub_slug %}">
+        <h3>{{ sub.title }}</h3>
+        <p>{{ sub.summary }}</p>
+        <span class="more">Детальніше →</span>
+    </a>
+    {% endfor %}
+</div>
+{% endblock %}
