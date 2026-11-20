@@ -1,0 +1,188 @@
+{% extends "main/base.html" %}
+{% load static %}
+
+{% block title %}Адмінка{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'main/panel.css' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+    <div class="crumbs"><a href="{% url 'home' %}">Головна</a> / Адмінка</div>
+{% endblock %}
+
+{% block content %}
+<div class="panel-head">
+    <div>
+        <h1>⚙️ Адмінка «{{ company.name }}»</h1>
+        <p class="lead">Керування відділами, співробітниками, послугами, клієнтами та проєктами.</p>
+    </div>
+    <div class="panel-head__links">
+        <span class="who">👤 {{ user.username }}</span>
+        <a class="btn btn-light" href="{% url 'admin:index' %}">Django admin</a>
+        <form method="post" action="{% url 'admin:logout' %}">
+            {% csrf_token %}
+            <button class="btn btn-light">Вийти</button>
+        </form>
+    </div>
+</div>
+
+<div class="stats">
+    {% for tab in tabs %}
+        <a class="stat" href="#{{ tab.key }}" data-tab-link="{{ tab.key }}">
+            <span class="stat__icon">{{ tab.icon }}</span>
+            <b>{{ tab.rows|length }}</b>
+            <span>{{ tab.title }}</span>
+        </a>
+    {% endfor %}
+</div>
+
+{% for message in messages %}
+    <div class="msg msg--{{ message.tags }}">{{ message }}</div>
+{% endfor %}
+
+<nav class="tabs">
+    {% for tab in tabs %}
+        <a class="tabs__btn" href="#{{ tab.key }}" data-tab-link="{{ tab.key }}">
+            {{ tab.icon }} {{ tab.title }} <span class="badge">{{ tab.rows|length }}</span>
+        </a>
+    {% endfor %}
+</nav>
+
+{% for tab in tabs %}
+<section class="tab" id="tab-{{ tab.key }}" data-tab="{{ tab.key }}">
+    <div class="box">
+        <h2>➕ Додати: {{ tab.one|lower }}</h2>
+        <form method="post" class="form-grid">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="create_{{ tab.key }}">
+            {% for field in tab.create_form %}
+                <div class="field field--{{ field.widget_type }}">
+                    {% if field.widget_type == "checkbox" %}
+                        {{ field }} {{ field.label_tag }}
+                    {% else %}
+                        {{ field.label_tag }} {{ field }}
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <div class="form-actions"><button class="btn btn-main">Додати</button></div>
+        </form>
+    </div>
+
+    <div class="box">
+        <div class="box__head">
+            <h2>{{ tab.icon }} {{ tab.title }} <span class="badge">{{ tab.rows|length }}</span></h2>
+            <input class="search" type="search" placeholder="Пошук…" data-search="{{ tab.key }}">
+        </div>
+        <div class="table-wrap">
+            <table data-table="{{ tab.key }}">
+                <thead>
+                <tr><th>ID</th>{% for h in tab.headers %}<th>{{ h }}</th>{% endfor %}<th></th></tr>
+                </thead>
+                <tbody>
+                {% for row in tab.rows %}
+                    <tr>
+                        <td class="muted">{{ row.id }}</td>
+                        {% for cell in row.cells %}
+                            <td>{% if forloop.first %}<b>{{ cell }}</b>{% else %}{{ cell|truncatechars:60 }}{% endif %}</td>
+                        {% endfor %}
+                        <td class="actions">
+                            <button type="button" class="btn btn-edit" data-edit="{{ tab.key }}" data-id="{{ row.id }}">✏️</button>
+                            <form method="post"
+                                  onsubmit="return confirm('Видалити «{{ row.label|escapejs }}»? {{ tab.confirm|escapejs }}');">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="delete_{{ tab.key }}">
+                                <input type="hidden" name="id" value="{{ row.id }}">
+                                <button class="btn btn-del">🗑</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="{{ tab.headers|length|add:2 }}" class="empty">Записів ще немає</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="backdrop" id="modal-{{ tab.key }}">
+        <div class="modal">
+            <h3>✏️ Редагувати: {{ tab.one|lower }}</h3>
+            <form method="post" class="form-grid">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="update_{{ tab.key }}">
+                <input type="hidden" name="id">
+                {% for field in tab.edit_form %}
+                    <div class="field field--{{ field.widget_type }}">
+                        {% if field.widget_type == "checkbox" %}
+                            {{ field }} {{ field.label_tag }}
+                        {% else %}
+                            {{ field.label_tag }} {{ field }}
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <div class="form-actions modal__actions">
+                    <button type="button" class="btn btn-light" data-close>Скасувати</button>
+                    <button class="btn btn-main">Зберегти</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endfor %}
+
+{{ edit_data|json_script:"edit-data" }}
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const EDIT_DATA = JSON.parse(document.getElementById('edit-data').textContent);
+
+    // вкладки: активна береться з #hash, щоб після збереження повертатися на ту ж вкладку
+    function showTab(key) {
+        if (!document.querySelector(`[data-tab="${key}"]`)) key = 'department';
+        document.querySelectorAll('[data-tab]').forEach(t => t.hidden = t.dataset.tab !== key);
+        document.querySelectorAll('[data-tab-link]').forEach(a =>
+            a.classList.toggle('active', a.dataset.tabLink === key));
+    }
+    window.addEventListener('hashchange', () => showTab(location.hash.slice(1)));
+    showTab(location.hash.slice(1));
+
+    // модальне вікно редагування: заповнюємо поля значеннями об'єкта
+    function openEdit(entity, id) {
+        const modal = document.getElementById('modal-' + entity);
+        const form = modal.querySelector('form');
+        form.elements.id.value = id;
+        for (const [name, value] of Object.entries(EDIT_DATA[entity][id])) {
+            const inputs = form.querySelectorAll(`[name="${name}"]`);
+            inputs.forEach(input => {
+                if (Array.isArray(value)) input.checked = value.includes(input.value);
+                else if (input.type === 'checkbox') input.checked = value;
+                else input.value = value;
+            });
+        }
+        modal.classList.add('open');
+        form.querySelector('input:not([type=hidden]), select, textarea').focus();
+    }
+
+    function closeModals() {
+        document.querySelectorAll('.backdrop.open').forEach(m => m.classList.remove('open'));
+    }
+
+    document.querySelectorAll('[data-edit]').forEach(btn =>
+        btn.addEventListener('click', () => openEdit(btn.dataset.edit, btn.dataset.id)));
+    document.querySelectorAll('[data-close]').forEach(btn => btn.addEventListener('click', closeModals));
+    document.querySelectorAll('.backdrop').forEach(b =>
+        b.addEventListener('click', e => { if (e.target === b) closeModals(); }));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModals(); });
+
+    // пошук по таблиці
+    document.querySelectorAll('[data-search]').forEach(input => {
+        const rows = document.querySelectorAll(`[data-table="${input.dataset.search}"] tbody tr`);
+        input.addEventListener('input', () => {
+            const q = input.value.trim().toLowerCase();
+            rows.forEach(r => r.hidden = !r.textContent.toLowerCase().includes(q));
+        });
+    });
+</script>
+{% endblock %}

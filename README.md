@@ -22,13 +22,39 @@
 | Команда `/team/` | Керівництво, Розробники, Вакансії |
 | Контакти `/contacts/` | Офіси, Зворотний зв'язок, Як дістатися |
 
+## Власна адмінка `/panel/`
+
+Кастомна адмінка для всіх 5 моделей (`Department`, `Employee`, `Service`, `Client`, `Project`) на одній сторінці:
+
+- вкладки для кожної таблиці + картки зі статистикою (кількість записів);
+- форма додавання, таблиця з пошуком, редагування в модальному вікні (Esc / клік по фону закриває), видалення з підтвердженням;
+- у підтвердженні видалення - попередження про зв'язки: видалення клієнта видаляє його проєкти (`CASCADE`), співробітники видаленого відділу лишаються без відділу (`SET_NULL`);
+- зв'язки: `ForeignKey` - випадний список, `ManyToMany` (послуги проєкту) - чекбокси;
+- валідація через `ModelForm` (`main/forms.py`): помилки (наприклад, email, що вже існує) показуються повідомленням, а не 500;
+- доступ лише для користувачів зі статусом staff (`StaffRequiredMixin`), інших перенаправляє на вхід;
+- контролер на класі: `main.panel.AdminPanelView` (один view обробляє дії `create_*`, `update_*`, `delete_*`);
+- початкові дані - міграція `main/migrations/0002_seed_data.py`;
+- моделі також зареєстровані у стандартній адмінці Django `/admin/` (`main/admin.py`);
+- тести: `main/tests_panel.py`.
+
+```bash
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver
+```
+
+Відкрити http://127.0.0.1:8000/panel/
+
 ## Структура
 
 ```
 config/                     # налаштування та головні urls.py
-main/                       # головна + 5 розділів
+main/                       # головна + 5 розділів + власна адмінка
 ├── data.py                 # дані розділів
 ├── views.py                # HomeView, SectionView
+├── panel.py                # AdminPanelView - власна адмінка
+├── forms.py                # ModelForm для 5 моделей
+├── admin.py                # реєстрація моделей у Django admin
 ├── urls.py
 ├── context_processors.py   # меню
 ├── templates/main/         # base.html, home.html, section.html
@@ -73,3 +99,23 @@ python manage.py runserver
 
 ### Розділ «Команда»
 ![Команда](screenshots/06_section_team.png)
+
+## Скріншоти: власна адмінка
+
+### Вкладка «Відділи» (після додавання запису)
+![Адмінка: відділи](screenshots/07_admin_panel.png)
+
+### Вкладка «Проєкти» (ForeignKey + ManyToMany)
+![Адмінка: проєкти](screenshots/08_admin_panel_projects.png)
+
+### Редагування в модальному вікні
+![Редагування](screenshots/09_admin_panel_edit_modal.png)
+
+### Вкладка «Клієнти»
+![Адмінка: клієнти](screenshots/10_admin_panel_clients.png)
+
+### Стандартна адмінка Django: проєкти
+![Django admin](screenshots/11_django_admin_projects.png)
+
+### Таблиці БД
+![Таблиці БД](screenshots/12_db_tables.png)

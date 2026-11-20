@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}{{ company.name }}{% endblock %} | {{ company.name }}</title>
     <link rel="stylesheet" href="{% static 'main/style.css' %}">
+    {% block extra_head %}{% endblock %}
 </head>
 <body>
 <header class="header">
@@ -34,5 +35,6 @@
 <footer class="footer">
     <div class="wrap">© {% now "Y" %} {{ company.name }} · {{ company.phone }} · {{ company.email }}</div>
 </footer>
+{% block scripts %}{% endblock %}
 </body>
 </html>
