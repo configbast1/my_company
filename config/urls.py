@@ -6,6 +6,8 @@ from main.views import ComplaintView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    # JSON API для окремого React-клієнта
+    path("api/", include("api.urls")),
     # власна адмінка «Моя компанія» (стоїть до шаблону /<розділ>/)
     path("panel/", AdminPanelView.as_view(), name="panel"),
     # форма «Скарга на товар або послугу»

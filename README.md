@@ -119,3 +119,20 @@ python manage.py runserver
 
 ### Таблиці БД
 ![Таблиці БД](screenshots/12_db_tables.png)
+
+## React-клієнт (окремий проєкт у папці `client/`)
+
+React + Vite. Отримує дані з Django через JSON API (`/api/...`) і надсилає скаргу POST-запитом.
+Інструкція запуску: [client/README.md](client/README.md).
+
+### Послуги (`GET /api/services/`)
+![React: послуги](screenshots/18_react_services.jpg)
+
+### Команда (`GET /api/employees/`)
+![React: команда](screenshots/19_react_team.jpg)
+
+### Проєкти (`GET /api/projects/`)
+![React: проєкти](screenshots/20_react_projects.jpg)
+
+### Скарга (`POST /api/complaints/`)
+![React: скарга](screenshots/21_react_complaint_post.jpg)
