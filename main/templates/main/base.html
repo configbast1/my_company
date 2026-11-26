@@ -9,6 +9,20 @@
 </head>
 <body>
 <header class="header">
+    <div class="userbar">
+        <div class="wrap userbar__row">
+            {% if site_user %}
+            <span class="userbar__hello">Добрий день, <b>{{ site_user }}</b>!</span>
+            <form method="post" action="{% url 'accounts:logout' %}" class="userbar__form">
+                {% csrf_token %}
+                <button type="submit" class="userbar__btn">Вийти</button>
+            </form>
+            {% else %}
+            <a class="userbar__link" href="{% url 'accounts:login' %}">Увійти</a>
+            <a class="userbar__btn" href="{% url 'accounts:register' %}">Реєстрація</a>
+            {% endif %}
+        </div>
+    </div>
     <div class="wrap header__row">
         <a class="logo" href="{% url 'home' %}">{{ company.name }}<span>{{ company.slogan }}</span></a>
         <nav class="nav">

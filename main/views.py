@@ -3,14 +3,15 @@ from django.http import Http404
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, TemplateView
 
+from accounts.mixins import SiteLoginRequiredMixin
 from subsections.data import SUBSECTIONS
 
 from .data import SECTIONS
 from .forms import ComplaintForm
 
 
-class HomeView(TemplateView):
-    """Головна сторінка: перелік усіх 5 розділів."""
+class HomeView(SiteLoginRequiredMixin, TemplateView):
+    """Головна сторінка: перелік усіх 5 розділів. Доступна лише після входу."""
     template_name = "main/home.html"
 
     def get_context_data(self, **kwargs):

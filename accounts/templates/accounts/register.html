@@ -1,0 +1,24 @@
+{% extends "main/base.html" %}
+
+{% block title %}Реєстрація{% endblock %}
+
+{% block content %}
+<div class="auth">
+    <div class="auth__card">
+        <div class="auth__icon">📝</div>
+        <h1>Реєстрація</h1>
+        <p class="auth__hint">Створіть обліковий запис. Після реєстрації ви одразу увійдете на сайт.</p>
+
+        <form method="post" class="cform cform--plain" novalidate>
+            {% csrf_token %}
+            {% for field in form %}
+                {% include "main/_field.html" %}
+            {% endfor %}
+            <button type="submit" class="cform__submit">Зареєструватися</button>
+        </form>
+
+        <p class="auth__switch">Уже маєте обліковий запис?
+            <a href="{% url 'accounts:login' %}">Увійти</a></p>
+    </div>
+</div>
+{% endblock %}

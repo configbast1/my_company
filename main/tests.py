@@ -1,12 +1,25 @@
 from django.test import TestCase
 from django.urls import reverse
 
+from accounts import storage
 from subsections.data import SUBSECTIONS
 
 from .data import SECTIONS
 
 
+def login_site_user(client, username="tester"):
+    """Створює користувача в пам'яті та входить ним (головна доступна лише після входу)."""
+    storage.USERS.clear()
+    client.post(reverse("accounts:register"), {
+        "username": username, "email": f"{username}@example.com",
+        "password1": "Secret-pass-123", "password2": "Secret-pass-123",
+    })
+
+
 class PagesTests(TestCase):
+    def setUp(self):
+        login_site_user(self.client)
+
     def test_home_lists_five_sections(self):
         response = self.client.get(reverse("home"))
         self.assertEqual(response.status_code, 200)
@@ -48,6 +61,7 @@ class ComplaintFormTests(TestCase):
         response = self.client.get(reverse("complaint"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Скарга на товар або послугу")
+        login_site_user(self.client)
         self.assertContains(self.client.get(reverse("home")), reverse("complaint"))
 
     def test_valid_complaint_is_saved(self):

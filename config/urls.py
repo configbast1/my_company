@@ -10,6 +10,8 @@ urlpatterns = [
     path("panel/", AdminPanelView.as_view(), name="panel"),
     # форма «Скарга на товар або послугу»
     path("complaint/", ComplaintView.as_view(), name="complaint"),
+    # реєстрація, вхід, вихід: /register/, /login/, /logout/
+    path("", include("accounts.urls")),
     # підрозділи (окремий додаток): /<розділ>/<підрозділ>/
     path("", include("subsections.urls")),
     # головна та 5 розділів: /, /<розділ>/

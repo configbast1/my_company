@@ -109,7 +109,7 @@ h1 { margin: 0 0 12px; color: #1e3a8a; }
 .cform__label { display: block; font-size: .85rem; font-weight: 600; color: #374151; margin-bottom: 6px; }
 .req { color: #dc2626; }
 
-.cform input[type="text"], .cform input[type="email"], .cform input[type="date"],
+.cform input[type="text"], .cform input[type="email"], .cform input[type="date"], .cform input[type="password"],
 .cform select, .cform textarea {
     width: 100%; padding: 11px 14px; font: inherit; font-size: .95rem; color: #1f2937;
     background: #f9fafb; border: 1.5px solid #d1d5db; border-radius: 10px;
@@ -144,3 +144,42 @@ h1 { margin: 0 0 12px; color: #1e3a8a; }
     .cform { padding: 20px; }
     .cform__row { grid-template-columns: 1fr; gap: 0; }
 }
+
+/* верхня смуга з привітанням користувача */
+.userbar { background: #172f73; font-size: .88rem; }
+.userbar__row { display: flex; justify-content: flex-end; align-items: center; gap: 14px; min-height: 38px; }
+.userbar__hello b { color: #fbbf24; }
+.userbar__form { margin: 0; }
+.userbar__link { opacity: .85; }
+.userbar__link:hover { opacity: 1; text-decoration: underline; }
+.userbar__btn {
+    font: inherit; font-size: .82rem; font-weight: 600; color: #fff; cursor: pointer;
+    background: rgba(255, 255, 255, .12); border: 1px solid rgba(255, 255, 255, .25);
+    border-radius: 999px; padding: 4px 14px; transition: background .15s;
+}
+.userbar__btn:hover { background: rgba(255, 255, 255, .25); }
+
+/* кнопка виходу на головній */
+.hero__row { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
+.hero__row p { margin-bottom: 0; }
+.hero__logout {
+    font: inherit; font-weight: 600; color: #1e3a8a; cursor: pointer;
+    background: #fff; border: none; border-radius: 10px; padding: 12px 20px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, .15); transition: transform .15s;
+}
+.hero__logout:hover { transform: translateY(-2px); }
+
+/* сторінки входу та реєстрації */
+.auth { display: flex; justify-content: center; padding: 20px 0; }
+.auth__card {
+    width: 100%; max-width: 440px; background: #fff; border-radius: 18px;
+    padding: 34px 34px 26px; box-shadow: 0 10px 40px rgba(30, 58, 138, .12); text-align: center;
+}
+.auth__icon { font-size: 2.4rem; }
+.auth__card h1 { margin: 6px 0 4px; }
+.auth__hint { color: #6b7280; margin: 0 0 22px; font-size: .95rem; }
+.auth__card .alert { text-align: left; }
+.cform--plain { padding: 0; box-shadow: none; text-align: left; }
+.alert--info { background: #e0f2fe; color: #075985; border: 1px solid #7dd3fc; }
+.auth__switch { margin: 18px 0 0; color: #6b7280; font-size: .92rem; }
+.auth__switch a { color: #2563eb; font-weight: 600; }
