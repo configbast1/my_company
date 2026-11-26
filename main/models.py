@@ -100,3 +100,54 @@ class Project(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Complaint(models.Model):
+    """Скарга клієнта на товар або послугу"""
+    TYPE_CHOICES = [
+        ("product", "Товар"),
+        ("service", "Послуга"),
+    ]
+    RESOLUTION_CHOICES = [
+        ("refund", "Повернення коштів"),
+        ("replace", "Заміна товару / повторне надання послуги"),
+        ("fix", "Усунення недоліків"),
+        ("other", "Інше"),
+    ]
+    STATUS_CHOICES = [
+        ("new", "Нова"),
+        ("in_review", "На розгляді"),
+        ("resolved", "Вирішена"),
+    ]
+
+    full_name = models.CharField(max_length=150, verbose_name="ПІБ")
+    email = models.EmailField(verbose_name="Email")
+    phone = models.CharField(max_length=20, blank=True, verbose_name="Телефон")
+    complaint_type = models.CharField(max_length=10, choices=TYPE_CHOICES, default="service",
+                                      verbose_name="Скарга на")
+    service = models.ForeignKey(
+        Service,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="complaints",
+        verbose_name="Послуга",
+    )
+    product_name = models.CharField(max_length=150, blank=True, verbose_name="Назва товару")
+    order_number = models.CharField(max_length=30, blank=True, verbose_name="Номер замовлення")
+    purchase_date = models.DateField(null=True, blank=True, verbose_name="Дата покупки")
+    subject = models.CharField(max_length=150, verbose_name="Тема")
+    description = models.TextField(verbose_name="Опис проблеми")
+    resolution = models.CharField(max_length=10, choices=RESOLUTION_CHOICES, default="fix",
+                                  verbose_name="Бажане вирішення")
+    wants_callback = models.BooleanField(default=False, verbose_name="Передзвоніть мені")
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="new", verbose_name="Статус")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата подання")
+
+    class Meta:
+        verbose_name = "Скарга"
+        verbose_name_plural = "Скарги"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"#{self.pk} {self.subject}"

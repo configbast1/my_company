@@ -1,0 +1,7 @@
+<div class="cform__field{% if field.errors %} has-error{% endif %}">
+    <label class="cform__label" for="{{ field.id_for_label }}">
+        {{ field.label }}{% if field.field.required %} <span class="req">*</span>{% endif %}
+    </label>
+    {{ field }}
+    {% for error in field.errors %}<p class="cform__error">{{ error }}</p>{% endfor %}
+</div>

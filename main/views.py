@@ -1,9 +1,12 @@
+from django.contrib import messages
 from django.http import Http404
-from django.views.generic import TemplateView
+from django.urls import reverse_lazy
+from django.views.generic import CreateView, TemplateView
 
 from subsections.data import SUBSECTIONS
 
 from .data import SECTIONS
+from .forms import ComplaintForm
 
 
 class HomeView(TemplateView):
@@ -29,3 +32,18 @@ class SectionView(TemplateView):
         context["section"] = SECTIONS[slug]
         context["subsections"] = SUBSECTIONS.get(slug, {})
         return context
+
+
+class ComplaintView(CreateView):
+    """Форма «Скарга на товар або послугу»: зберігає скаргу в БД."""
+    form_class = ComplaintForm
+    template_name = "main/complaint.html"
+    success_url = reverse_lazy("complaint")
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(
+            self.request,
+            f"Дякуємо! Скаргу №{self.object.pk} прийнято. Ми відповімо на {self.object.email} протягом 2 робочих днів.",
+        )
+        return response

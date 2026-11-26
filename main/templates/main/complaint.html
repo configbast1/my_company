@@ -1,0 +1,83 @@
+{% extends "main/base.html" %}
+
+{% block title %}Скарга на товар або послугу{% endblock %}
+
+{% block breadcrumbs %}
+<nav class="crumbs">
+    <a href="{% url 'home' %}">Головна</a> / <span>Скарга</span>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="complaint">
+    <div class="complaint__intro">
+        <h1>⚠️ Скарга на товар або послугу</h1>
+        <p class="lead">Щось пішло не так? Опишіть проблему, і ми розберемося.
+            Кожну скаргу розглядає менеджер якості протягом 2 робочих днів.</p>
+        <ul class="complaint__steps">
+            <li><b>1.</b> Заповніть форму</li>
+            <li><b>2.</b> Отримайте номер скарги</li>
+            <li><b>3.</b> Чекайте відповідь на email</li>
+        </ul>
+    </div>
+
+    {% for message in messages %}
+    <div class="alert alert--{{ message.tags }}">✅ {{ message }}</div>
+    {% endfor %}
+
+    <form method="post" class="cform" novalidate>
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+        <div class="alert alert--error">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <fieldset>
+            <legend>Ваші контакти</legend>
+            <div class="cform__row">
+                {% include "main/_field.html" with field=form.full_name %}
+                {% include "main/_field.html" with field=form.email %}
+            </div>
+            {% include "main/_field.html" with field=form.phone %}
+        </fieldset>
+
+        <fieldset>
+            <legend>На що скарга</legend>
+            <div class="cform__field">
+                <span class="cform__label">{{ form.complaint_type.label }}</span>
+                <div class="cform__radios">
+                    {% for radio in form.complaint_type %}
+                    <label class="chip">{{ radio.tag }}<span>{{ radio.choice_label }}</span></label>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="cform__row">
+                {% include "main/_field.html" with field=form.service %}
+                {% include "main/_field.html" with field=form.product_name %}
+            </div>
+            <div class="cform__row">
+                {% include "main/_field.html" with field=form.order_number %}
+                {% include "main/_field.html" with field=form.purchase_date %}
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>Суть проблеми</legend>
+            {% include "main/_field.html" with field=form.subject %}
+            {% include "main/_field.html" with field=form.description %}
+            {% include "main/_field.html" with field=form.resolution %}
+        </fieldset>
+
+        <div class="cform__checks">
+            {% for field in form %}{% if field.widget_type == 'checkbox' %}
+            <label class="check">
+                {{ field }}<span>{{ field.label }}</span>
+            </label>
+            {% for error in field.errors %}<p class="cform__error">{{ error }}</p>{% endfor %}
+            {% endif %}{% endfor %}
+        </div>
+
+        <button type="submit" class="cform__submit">Надіслати скаргу</button>
+    </form>
+</div>
+{% endblock %}

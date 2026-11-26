@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Client, Department, Employee, Project, Service
+from .models import Client, Complaint, Department, Employee, Project, Service
 
 
 class EmployeeInline(admin.TabularInline):
@@ -46,3 +46,11 @@ class ProjectAdmin(admin.ModelAdmin):
     list_display = ("name", "client", "status", "start_date")
     list_filter = ("status", "client")
     filter_horizontal = ("services",)
+
+
+@admin.register(Complaint)
+class ComplaintAdmin(admin.ModelAdmin):
+    list_display = ("id", "subject", "complaint_type", "full_name", "email", "status", "created_at")
+    list_filter = ("status", "complaint_type", "resolution")
+    list_editable = ("status",)
+    search_fields = ("subject", "full_name", "email", "order_number")
